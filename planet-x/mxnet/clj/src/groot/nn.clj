@@ -7,7 +7,7 @@
             [org.apache.clojure-mxnet.module :as m]
             [org.apache.clojure-mxnet.symbol :as sym]))
 
-(defn load-model [path]
+(defn preload-model [path]
   (let [model (m/load-checkpoint {:prefix path
                                   :epoch 0})]
     {:model (m/symbol model)
@@ -41,7 +41,7 @@
                           contexts]
                    :or {contexts [(context/cpu 1)]                ;; running on cpu by default
                         class-count 2}}]                          ;; binary cross entropy by default
-  (let [{:keys [arg-params] :as trained-model} (load-model arch)
+  (let [{:keys [arg-params] :as trained-model} (preload-model arch)
         {:keys [net new-args]} (add-head (assoc trained-model
                                                 :class-count class-count))]
     (-> (m/module net {:contexts contexts})
@@ -87,7 +87,7 @@
   (m/fit model
          {:train-data (:train data-loader)
           :eval-data (:valid data-loader)
-          :num-epoch 1
+          :num-epoch epochs
           :fit-params (m/fit-params {:intializer (init/xavier {:rand-type "gaussian"
                                                                :factor-type "in"
                                                                :magnitude 2})
@@ -106,8 +106,8 @@
 
 (defn run-on [{:keys [cores cnum]}]
   (if (= :gpu cores)
-    (mapv context/gpu cnum)
-    (mapv context/cpu cnum)))
+    (mapv context/gpu (range cnum))
+    (mapv context/cpu (range cnum))))
 
 ;; how to use it:
 
@@ -118,8 +118,15 @@
   (def data-loader (nn/make-data-loader {:train-path "data/groot/groot-train.rec"
                                          :valid-path "data/groot/groot-valid.rec"}))
 
+  ;; runnint on CPU (default)
   (def model (nn/make-model {:arch "model/resnet-18"
                              :data-loader data-loader}))
+
+  ;; runnint on GPU
+  (def model (nn/make-model {:arch "model/resnet-18"
+                             :data-loader data-loader
+                             :contexts (nn/run-on {:cores :gpu
+                                                   :cnum 1})}))
 
   (nn/fit model data-loader {:epochs 1})
 

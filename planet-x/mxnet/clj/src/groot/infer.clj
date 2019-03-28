@@ -22,7 +22,7 @@
       (ndarray/array [1 channels height width])))
 
 (defn predict [model img-url & {:keys [show? height width channels]
-                                :or {show? true
+                                :or {show? false
                                      height 224
                                      width 224
                                      channels 3}}]
@@ -33,16 +33,29 @@
                                 :shape [1 channels height width]}]})
         (m/forward {:data [nd-img]})
         (m/outputs)
-        (ffirst))))
+        (ffirst)
+        ndarray/->vec)))
 
 
 (comment
 
-  (require '[groot.nn :as nn] '[groot.infer :as infer])
+  (require '[groot.nn :as nn] '[groot.infer :as infer] '[org.apache.clojure-mxnet.module :as mm])
 
   (def model (nn/load-model "model/groot"))
 
-  (infer/predict model "file:./data/groot/valid/no-human/01-2019.05-51-47.jpg" :show? false)
+  (infer/predict model "file:./data/groot/valid/no-human/01-2019.05-51-47.jpg")
 
-  ;; => #object[org.apache.mxnet.NDArray 0x16923d4a "[\n [0.20457779,0.79542214]\n]\n<NDArray (1,2) cpu(0) float32>"]
+  ;; boot.user=> (def m (mm/load-checkpoint {:prefix "model/groot-18" :epoch 6}))
+
+  ;; boot.user=> (infer/predict m "file:./data/groot/valid/human/04-2018.10-02-19.jpg")
+  ;; => [0.9444668 0.05553314]
+
+  ;; boot.user=> (infer/predict m "file:./data/groot/valid/no-human/07-2018.20-38-06.jpg")
+  ;; => [0.1873892 0.8126108]
+
+  ;; boot.user=> (infer/predict m "file:./data/groot/valid/no-human/01-2019.05-51-47.jpg")
+  ;; => [0.004020324 0.99597967]
+
+  ;; boot.user=> (infer/predict m "file:./data/groot/valid/human/03-2018.11-17-21.jpg")
+  ;; => [0.9457831 0.054216918]
 )
