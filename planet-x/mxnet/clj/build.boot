@@ -7,6 +7,7 @@
                   [org.apache.mxnet/mxnet-full_2.11-osx-x86_64-cpu "1.5.0-SNAPSHOT"]
                   [org.apache.mxnet.contrib.clojure/clojure-mxnet "1.5.0-SNAPSHOT"]
                   [origami "4.0.0-3"]
+                  [metasoarous/oz "1.6.0-alpha2"]
 
                   ;; boot clj
                   [boot/core                "2.8.2"           :scope "provided"]

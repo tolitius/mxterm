@@ -1,5 +1,6 @@
 (ns groot.nn
   (:require [clojure.string :as string]
+            [org.apache.clojure-mxnet.visualization :as viz]
             [org.apache.clojure-mxnet.callback :as callback]
             [org.apache.clojure-mxnet.context :as context]
             [org.apache.clojure-mxnet.initializer :as init]
@@ -82,18 +83,21 @@
                        :batch-size batch-size})})
 
 (defn fit [model data-loader {:keys [epochs
-                                     batch-size]
-                              :or {batch-size 16}}]
+                                     batch-size
+                                     params]
+                              :or {batch-size 16
+                                   params {}}}]
   (m/fit model
          {:train-data (:train data-loader)
           :eval-data (:valid data-loader)
           :num-epoch epochs
-          :fit-params (m/fit-params {:intializer (init/xavier {:rand-type "gaussian"
-                                                               :factor-type "in"
-                                                               :magnitude 2})
-                                     :batch-end-callback (callback/speedometer
-                                                           batch-size
-                                                           10)})}))
+          :fit-params (m/fit-params (merge {:intializer (init/xavier {:rand-type "gaussian"
+                                                                      :factor-type "in"
+                                                                      :magnitude 2})
+                                            :batch-end-callback (callback/speedometer
+                                                                  batch-size
+                                                                  10)}
+                                           params))}))
 
 (defn save-model [model path]
  (m/save-checkpoint model {:prefix path
@@ -108,6 +112,18 @@
   (if (= :gpu cores)
     (mapv context/gpu (range cnum))
     (mapv context/cpu (range cnum))))
+
+(defn draw [{:keys [model path data title]
+             :or {data [1 3 224 224]
+                  path "./"
+                  title "groot"}}]
+  (let [plot (viz/plot-network
+               (m/symbol model)
+               {"data" data}
+               {:title title
+                :node-attrs {:shape "oval"
+                             :fixedsize "false"}})]
+    (viz/render plot title path)))
 
 ;; how to use it:
 
@@ -129,6 +145,9 @@
                                                    :cnum 1})}))
 
   (nn/fit model data-loader {:epochs 1})
+
+  ;; or with some params
+  (nn/fit model data-loader {:epochs 1 :params {:eval-metric (eval-metric/f1)}})
 
   (nn/save-model model "model/groot")
 

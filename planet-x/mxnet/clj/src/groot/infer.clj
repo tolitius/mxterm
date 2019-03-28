@@ -1,10 +1,6 @@
 (ns groot.infer
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string]
-            [org.apache.clojure-mxnet.module :as m]
+  (:require [org.apache.clojure-mxnet.module :as m]
             [org.apache.clojure-mxnet.ndarray :as ndarray]
-            [org.apache.clojure-mxnet.shape :as mx-shape]
-            [org.apache.clojure-mxnet.symbol :as sym]
             [opencv4.core :as cv]
             [opencv4.utils :as cvu]))
 
