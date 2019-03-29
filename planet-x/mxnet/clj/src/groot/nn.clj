@@ -22,7 +22,7 @@
    model:        the pretrained model
    params:       parameters of the pretrained model
    class-count:  the number of classes to predict
-   layer-name:   the layer name to add"
+   layer-name:   the layer name to cut the model at"
 
   [{:keys [model params class-count layer-name]
     :or {layer-name "flatten0"}}]
