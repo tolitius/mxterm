@@ -147,7 +147,9 @@
   (nn/fit model data-loader {:epochs 1})
 
   ;; or with some params
-  (nn/fit model data-loader {:epochs 1 :params {:eval-metric (eval-metric/f1)}})
+  (def metric (em/comp-metric [(em/accuracy) (em/f1)]))
+
+  (nn/fit model data-loader {:epochs 1 :params {:eval-metric metric}})
 
   (nn/save-model model "model/groot")
 
