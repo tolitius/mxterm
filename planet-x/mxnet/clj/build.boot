@@ -6,8 +6,9 @@
 
                   [org.apache.mxnet/mxnet-full_2.11-osx-x86_64-cpu "1.5.0-SNAPSHOT"]
                   [org.apache.mxnet.contrib.clojure/clojure-mxnet "1.5.0-SNAPSHOT"]
-                  [origami "4.0.0-3"]
-                  [metasoarous/oz "1.6.0-alpha2"]
+                  [origami                  "4.0.0-3"]
+                  [metasoarous/oz           "1.6.0-alpha2"]
+                  [me.raynes/conch          "0.8.0"]
 
                   ;; boot clj
                   [boot/core                "2.8.2"           :scope "provided"]
@@ -25,13 +26,15 @@
 
 (require '[adzerk.bootlaces :refer :all]
          '[tolitius.boot-check :as check]
-         '[adzerk.boot-test :as bt])
+         '[adzerk.boot-test :as bt]
+         '[me.raynes.conch :as sh])
 
 (bootlaces! +version+)
 
 (defn uber-env []
   (set-env! :source-paths #(conj % "test"))
   (set-env! :resource-paths #(conj % "dev-resources"))
+  (sh/programs imgcat) ;; enable imgcat to be called from REPL
   ; (System/setProperty "conf" "dev-resources/config.edn")
   )
 

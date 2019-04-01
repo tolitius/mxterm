@@ -4,25 +4,22 @@
             [opencv4.core :as cv]
             [opencv4.utils :as cvu]))
 
-(defn load-image [url & {:keys [show? height width channels]
-                         :or {show? true
-                              height 224
+(defn load-image [url & {:keys [height width channels]
+                         :or {height 224
                               width 224
                               channels 3}}]
   (-> url
       (cvu/mat-from-url)
       (cv/resize! (cv/new-size height width))
-      (#(do (if show? (cvu/imshow %)) %))
       (cv/convert-to! cv/CV_8SC3 0.5)
       (cvu/mat->flat-rgb-array)
       (ndarray/array [1 channels height width])))
 
-(defn predict [model img-url & {:keys [show? height width channels]
-                                :or {show? false
-                                     height 224
+(defn predict [model img-url & {:keys [height width channels]
+                                :or {height 224
                                      width 224
                                      channels 3}}]
-  (let [nd-img (load-image img-url :show? show?)]
+  (let [nd-img (load-image img-url)]
     (-> model
         (m/bind {:for-training false
                  :data-shapes [{:name "data"
@@ -33,6 +30,7 @@
         ndarray/->vec)))
 
 
+;; how to REPL/use it:
 (comment
 
   (require '[groot.nn :as nn] '[groot.infer :as infer] '[org.apache.clojure-mxnet.module :as mm])

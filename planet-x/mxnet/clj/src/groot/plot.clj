@@ -46,9 +46,22 @@
                 :color {:field "kind" :type "nominal"}}
      :mark "line"}))
 
-;; would be niice if mxnet model had metrics on it and can be passed here instead
+;; would be niice if mxnet model would be
+;; wrapped into something that included data loader and train metrics
+;; rather than passing a path to scraped metrics after the fact
 (defn plot-losses [path]
   (let [metrics (-> path slurp edn/read-string)
         losses (plottable-losses metrics)]
     ;; (oz/start-plot-server!) ;; if not already started
     (oz/view! losses)))
+
+
+;; how to REPL/use it:
+(comment
+
+  (require '[oz.core :as oz] '[groot.plot :as plot])
+  (oz/start-plot-server!)
+
+  (p/plot-losses "dev-resources/groot/recorded-metrics.edn")
+
+)

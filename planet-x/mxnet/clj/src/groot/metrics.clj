@@ -5,21 +5,21 @@
   (:import [org.apache.mxnet CompositeEvalMetric]))
 
 (defn comp-metric
-  "Create a metric instance composed out of several metrics"
+  "create a metric instance composed out of several metrics"
   [metrics]
   (let [cm (CompositeEvalMetric.)]
     (doseq [m metrics] (.add cm m))
     cm))
 
 (defn get
-  "Get the values of the metric in as a map of {name value} pairs"
+  "get the values of the metric in as a map of {name value} pairs"
   [metric]
   (apply zipmap (-> (.get metric) util/tuple->vec)))
 
 ;; (def rec (atom []))
 ;; (record-metric rec (eval-metric/accuracy) "accuracy")
 (defn record-metric
-  "Records metrics for every batch in a \"recorder\" (clojure atom)"
+  "records metrics for every batch in a \"recorder\" (clojure atom)"
   [recorder metric mname]
   (em/custom-metric (fn [label pred]
                       (em/update metric [label] [pred])
