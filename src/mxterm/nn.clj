@@ -1,4 +1,4 @@
-(ns groot.nn
+(ns mxterm.nn
   (:require [clojure.string :as string]
             [org.apache.clojure-mxnet.visualization :as viz]
             [org.apache.clojure-mxnet.callback :as callback]
@@ -211,7 +211,7 @@
 
 (comment
 
-  (require '[groot.nn :as nn])
+  (require '[mxterm.nn :as nn])
 
   (def data-loader (nn/make-data-loader {:train-path "data/groot/groot-train.rec"
                                          :valid-path "data/groot/groot-valid.rec"}))
