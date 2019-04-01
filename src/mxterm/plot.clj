@@ -1,4 +1,4 @@
-(ns groot.plot
+(ns mxterm.plot
   (:require [clojure.edn :as edn]
             [oz.core :as oz]))
 
@@ -59,7 +59,7 @@
 ;; how to REPL/use it:
 (comment
 
-  (require '[oz.core :as oz] '[groot.plot :as plot])
+  (require '[oz.core :as oz] '[mxterm.plot :as plot])
   (oz/start-plot-server!)
 
   (p/plot-losses "dev-resources/groot/recorded-metrics.edn")

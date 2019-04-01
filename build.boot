@@ -55,10 +55,10 @@
 
 (task-options!
   push {:ensure-branch nil}
-  pom {:project     'groot
+  pom {:project     'mxterm
        :version     +version+
        :description "mxnet touch and feel"
-       :url         "https://github.com/tolitius/groot"
-       :scm         {:url "https://github.com/tolitius/groot"}
+       :url         "https://github.com/tolitius/mxterm"
+       :scm         {:url "https://github.com/tolitius/mxterm"}
        :license     {"Eclipse Public License"
                      "http://www.eclipse.org/legal/epl-v10.html"}})

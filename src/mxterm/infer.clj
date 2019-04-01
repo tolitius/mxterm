@@ -1,4 +1,4 @@
-(ns groot.infer
+(ns mxterm.infer
   (:require [org.apache.clojure-mxnet.module :as m]
             [org.apache.clojure-mxnet.ndarray :as ndarray]
             [opencv4.core :as cv]
@@ -33,7 +33,7 @@
 ;; how to REPL/use it:
 (comment
 
-  (require '[groot.nn :as nn] '[groot.infer :as infer] '[org.apache.clojure-mxnet.module :as mm])
+  (require '[mxterm.nn :as nn] '[mxterm.infer :as infer] '[org.apache.clojure-mxnet.module :as mm])
 
   (def model (nn/load-model "model/groot"))
 

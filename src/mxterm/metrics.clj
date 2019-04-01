@@ -1,4 +1,4 @@
-(ns groot.metrics
+(ns mxterm.metrics
   (:require [org.apache.clojure-mxnet.util :as util]
             [org.apache.clojure-mxnet.ndarray :as ndarray]
             [org.apache.clojure-mxnet.eval-metric :as em])
