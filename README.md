@@ -1,11 +1,13 @@
-# taking [mxnet](https://mxnet.incubator.apache.org/) for a spin
+## taking [MXNet](https://mxnet.incubator.apache.org/) for a spin
 
 `doing` is the most efficient way to understand theory behind anything
 
-based on a [clojure mxnet API](https://github.com/apache/incubator-mxnet/tree/master/contrib/clojure-package)
-mxterm attempts to bring REPL exploratory feel to, at times, pretty science heavy and complex corners of deep learning.
+based on [Clojure MXNet API](https://github.com/apache/incubator-mxnet/tree/master/contrib/clojure-package)
+`mxterm` attempts to bring REPL exploratory feel to, at times, pretty science heavy and complex corners of deep learning.
 
-## Transfer Learning
+---
+
+# Transfer Learning
 
 transfer learning is twofold:
 
@@ -14,10 +16,13 @@ transfer learning is twofold:
 * someone has lots of GPUs
 * someone takes a lot of data
 * someone creates or chooses an architecture
-  - i.e. the shape of neural network: what layers to use, how many of them to use, how layers are connected to each other, etc.
+  - i.e. the shape of neural network:
+    - what layers to use
+    - how many of them to use
+    - how layers are connected to each other, etc.
 * someone trains this architecture with that data on all those fancy GPUs
 * someone saves these learned parameters for this architecure
-* someone calls this saved parameters a `model` and lets others to use this model
+* someone calls these saved parameters a `model` and lets others to use this model
 
 examples of such architectures:
 
@@ -32,19 +37,21 @@ examples of such architectures:
     (i.e. model was trained to understand English, but you need to train it to write poems: so you are going to train this last layer with poems)
 * you train this model with your new data (poems, your classified images, etc.)
 
-hence the new model would be well tuned to your data by relying on all that wisdom from the pretrained model + some your additional training.
+Hence the new model would be well tuned to your data by relying on all that wisdom from the pretrained model + some your additional training.
 
-## Train a custom image classifier
+# Train a custom image classifier
 
-this is going to be close, but not exactly, to an mxnet "[Fine-tune with Pretrained Models](https://mxnet.incubator.apache.org/versions/master/faq/finetune.html)" example.
+> _this is going to be somewhat similar to the mxnet "[Fine-tune with Pretrained Models](https://mxnet.incubator.apache.org/versions/master/faq/finetune.html)" example, but on a custom set of images, in Clojure and a little different._
 
-instead of traning on [Caltech256](https://authors.library.caltech.edu/7694/) dataset, we'll take a custom dataset of images with two categories: "human" and "no human". This is an example (I use these for my home Raspberry Pi camera to detect package deliveres, strangers, etc..), you can come up with different images and different categories of course.
+Instead of traning on [Caltech256](https://authors.library.caltech.edu/7694/) dataset, we'll take a custom dataset of images with two categories: "`human`" and "`not human`".
 
-### Encode images into RecordIO
+This is an example (in this case it is for a home Raspberry Pi camera to detect package deliveres, strangers, etc..), you can come up with different images and different categories of course.
 
-before plugging these images into mxnet, they need to be converted to RecordIO format which is done by [dev-resources/groot/make-datasets.sh](dev-resources/groot/make-datasets.sh) script that uses mxnet's `im2rec.py` that encodes all the images with their labels into `.rec` files. [Here](https://mxnet.incubator.apache.org/versions/master/architecture/note_data_loading.html) is more on why and how.
+## Encode images into RecordIO
 
-### Download a pretrained model
+Before plugging these images into MXNet, they need to be converted to RecordIO format which is done by [dev-resources/groot/make-datasets.sh](dev-resources/groot/make-datasets.sh) script that uses MXNet's `im2rec.py` that encodes all the images _with their labels_ into `.rec` files. [Here](https://mxnet.incubator.apache.org/versions/master/architecture/note_data_loading.html) is more on why and how.
+
+## Download a pretrained model
 
 Since there is already a few great options for pretrained models in the space of image recognition we'll train our model on top of "ResNet". We'll take an 18 layer pretrained model:
 
@@ -52,6 +59,8 @@ Since there is already a few great options for pretrained models in the space of
 wget http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-0000.params -P model
 wget http://data.mxnet.io/models/imagenet/resnet/18-layers/resnet-18-symbol.json -P model
 ```
+
+> why only 18 layers?
 
 the reason it is 18 and not 50 or 152 layers, which are also available, is that the idea is to iterate quickly and see what works and what does not. 18 layer model is more shallow and takes a lot less time to train and experiment with. Once the right approach and hyper parameters are figured out, you can download a 152 layer ResNet and train on top of that.
 
@@ -78,18 +87,24 @@ model
 
 `groot` is a name of a little Raspberry Pi home camera that guards an important corner of the galaxy.
 
-### Learning things
+## Learning things
 
-mxnet comes in two flavors: [Gluon API](https://mxnet.incubator.apache.org/api/python/gluon/gluon.html) and [Module API](https://mxnet.incubator.apache.org/api/python/module/module.html). Clojure bindings are currently based on Module API that are basd on Scala mxnet bindings that are based on [JNI bindings](https://github.com/apache/incubator-mxnet/tree/master/scala-package/native). Clojure Gluon API are currently [proposed](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=103089990).
+MXNet comes in two flavors: [Gluon API](https://mxnet.incubator.apache.org/api/python/gluon/gluon.html) and [Module API](https://mxnet.incubator.apache.org/api/python/module/module.html). Clojure bindings are currently based on Module API that are basd on Scala mxnet bindings that are based on [JNI bindings](https://github.com/apache/incubator-mxnet/tree/master/scala-package/native). Clojure Gluon API are currently [proposed](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=103089990).
 
-Module API are not complex, but quite different from "traditional" deep learning expectations (i.e. PyTorch, Tensorflow, Keras, etc.) hence take time to wrap one's mind around. mxterm wraps Clojure Module API for its examples simply because _the focus_ is not on any particular API, but rather on _how and why things are done in deep learning_. Besides the source is open and there are several Clojure Module API [examples](https://github.com/apache/incubator-mxnet/tree/master/contrib/clojure-package/examples) to look at plus some [great tutorials](https://arthurcaillau.com/blog/).
+Module API are not complex, but quite different from a "traditional" deep learning flow (i.e. PyTorch, Tensorflow, Keras, etc.) hence take time to wrap one's mind around.
 
-Let'e rock and roll:
+`mxterm` wraps Clojure Module API for its examples simply because _the focus_ is not on any particular API, but rather on _how and why things are done in deep learning_. Besides the source is open and there are several Clojure Module API [examples](https://github.com/apache/incubator-mxnet/tree/master/contrib/clojure-package/examples) to look at plus some [great tutorials](https://arthurcaillau.com/blog/).
+
+### Let's rock and roll:
 
 ```clojure
 (require '[mxterm.nn :as nn]
          '[mxterm.infer :as infer]
 ```
+
+### Create a data loader
+
+Creating data loader that is capable of providing data, usually by batches:
 
 ```clojure
 => (def data-loader (nn/make-data-loader {:train-path "data/groot/groot-train.rec"
@@ -100,6 +115,12 @@ Let'e rock and roll:
 #'boot.user/data-loader
 ```
 
+### Make a model
+
+Creating model based on "ResNet 18". This will add our custom layer at the "head" of this pretrained "ResNet 18" model so we can reuse all the pretrained wisdom while training (or in this case "fine tuning") _our_ custom layer of Groot images (from a Raspberry Pi camera):
+
+![transfer learning: cut head](doc/img/resnet-to-groot-layer.png)
+
 ```clojure
 => (def model (nn/make-model {:arch "model/resnet-18"
                               :data-loader data-loader}))
@@ -109,7 +130,9 @@ Let'e rock and roll:
 #'boot.user/model
 ```
 
-in case we are running on GPUs we can add context when making a model:
+### GPU is king of deep learning
+
+By default mxterm will train the model on CPU, but if you do have GPU enabled server we can add context when creating a model to let this learner know to learn on top of GPU:
 
 ```clojure
 => (def model (nn/make-model {:arch "model/resnet-18"
@@ -117,13 +140,17 @@ in case we are running on GPUs we can add context when making a model:
                               :contexts (nn/run-on {:cores :gpu :cnum 1})}))
 ```
 
+### Train the model
+
+Usually in deep learning training the model is also called "fitting" that is because we are trying to "fit" all the parameters (a.k.a. weights and biases) to produce expected results:
+
 ```clojure
 => (nn/fit model data-loader)
 
-Epoch[0] Batch [10]	    Speed: 205.92 samples/sec	Train-accuracy=0.715909
-Epoch[0] Batch [20]	    Speed: 224.40 samples/sec	Train-accuracy=0.752976
-Epoch[0] Batch [30]	    Speed: 217.39 samples/sec	Train-accuracy=0.770161
-Epoch[0] Batch [40]	    Speed: 216.80 samples/sec	Train-accuracy=0.775915
+Epoch[0] Batch [10]	  Speed: 205.92 samples/sec	Train-accuracy=0.715909
+Epoch[0] Batch [20]	  Speed: 224.40 samples/sec	Train-accuracy=0.752976
+Epoch[0] Batch [30]	  Speed: 217.39 samples/sec	Train-accuracy=0.770161
+Epoch[0] Batch [40]	  Speed: 216.80 samples/sec	Train-accuracy=0.775915
 ...      ...
 Epoch[0] Batch [300]	Speed: 221.30 samples/sec	Train-accuracy=0.836171
 Epoch[0] Batch [310]	Speed: 220.69 samples/sec	Train-accuracy=0.837621
@@ -135,19 +162,32 @@ Epoch[0] Time cost=25629
 Epoch[0] Validation-accuracy=0.58284885
 ```
 
+By default `nn/fit` would train for a single epoch.
 `58.2%` validation accuracy is not exactly high, let's train it with some more epochs and with better metrics:
+
+#### Better metrics
+
+Metrics are extremely important during training, since it is the only way to have some understanding of how the training is going, and whether and how we need to change hyper parameters (i.e. learning rate, regularization, momentum, etc.) to train better: faster, more accurate, etc.
+
+When training a classification model it is often good to use an [F1](https://en.wikipedia.org/wiki/F1_score) (FBeta) metric that takes into the count classes that are not well balanced. Again does not affect training, but gives a much more accurate visual of how successful or not the training is.
+
+Let's create a composed metric from both `accuracy` and `f1`:
 
 ```clojure
 => (require '[org.apache.clojure-mxnet.eval-metric :as em])
 
 => (def metric (em/comp-metric [(em/accuracy) (em/f1)]))
 #'boot.user/metric
+```
 
+and train for 5 more epochs:
+
+```
 => (nn/fit model data-loader {:epochs 5
                               :params {:eval-metric metric}})
 
-Epoch[0] Batch [10]	    Speed: 211.92 samples/sec	Train-accuracy=0.875000
-Epoch[0] Batch [10]	    Speed: 211.92 samples/sec	Train-f1=0.920778
+Epoch[0] Batch [10]	  Speed: 211.92 samples/sec	Train-accuracy=0.875000
+Epoch[0] Batch [10]	  Speed: 211.92 samples/sec	Train-f1=0.920778
 Epoch[0] Batch [300]	Speed: 219.48 samples/sec	Train-accuracy=0.910714
 Epoch[0] Batch [300]	Speed: 219.48 samples/sec	Train-f1=0.944446
 ...
@@ -163,20 +203,19 @@ Epoch[4] Validation-accuracy=0.9625
 
 `96.24%` is a much better validation accuracy.
 
-and since this is an accepted accuracy for `resnet-18` to explore and play with, we can save the model:
+Since this is an accepted accuracy for "ResNet 18" to explore and play with, we can save the model so later we can just fire up REPL, load it and train it some more or use it for predictions:
 
 ```clojure
 => (nn/save-model model "model/groot-18")
+
 INFO  org.apache.mxnet.module.Module: Saved checkpoint to model/shroot-18-0000.params
 INFO  org.apache.mxnet.module.Module: Saved optimizer state to model/shroot-18-0000.states
 #object[org.apache.mxnet.module.Module 0x599149e8 "org.apache.mxnet.module.Module@599149e8"]
 ```
 
-## Predicting things
+# Predicting things
 
-The usual goal of creating and training the model is to use it afterwards to predict things.
-
-Let's load it from where we left off and see if it can recognize humans:
+Let's load the model we trained and see how well it recognizes humans on pictures it was _not_ trained on: from a validation dataset:
 
 ```clojure
 => (def m (nn/load-model "model/groot-18"))
