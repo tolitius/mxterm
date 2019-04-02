@@ -120,7 +120,7 @@ Module API are not complex, but quite different from a "traditional" deep learni
 
 ```clojure
 (require '[mxterm.nn :as nn]
-         '[mxterm.infer :as infer]
+         '[mxterm.infer :as infer])
 ```
 
 ### Create a data loader
