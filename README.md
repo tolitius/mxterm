@@ -268,7 +268,7 @@ niice.
 
 # Visualizing things
 
-There many things that can be visualized: data, metrics, models, confusion matricies, etc.
+There are many things that can be visualized: data, metrics, models, confusion matricies, etc.
 
 Here are a couple of examples on how to visualize metrics and models.
 
