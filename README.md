@@ -7,6 +7,27 @@ based on [Clojure MXNet API](https://github.com/apache/incubator-mxnet/tree/mast
 
 ---
 
+- [Transfer Learning](#transfer-learning)
+    - [fold one: "train the beast"](#fold-one-train-the-beast)
+    - [fold two: "train the beauty"](#fold-two-train-the-beauty)
+- [Train a custom image classifier](#train-a-custom-image-classifier)
+  - [Encode images into RecordIO](#encode-images-into-recordio)
+  - [Download a pretrained model](#download-a-pretrained-model)
+  - [Learning things](#learning-things)
+    - [Let's rock and roll:](#lets-rock-and-roll)
+    - [Create a data loader](#create-a-data-loader)
+    - [Make a model](#make-a-model)
+    - [GPU is king of deep learning](#gpu-is-king-of-deep-learning)
+    - [Train the model](#train-the-model)
+      - [Better metrics](#better-metrics)
+- [Predicting things](#predicting-things)
+- [Visualizing things](#visualizing-things)
+  - [Looking at the architecture](#looking-at-the-architecture)
+  - [Looking at the metrics](#looking-at-the-metrics)
+- [What is all this?](#what-is-all-this)
+- [License](#license)
+
+
 # Transfer Learning
 
 transfer learning is twofold:
@@ -149,10 +170,10 @@ Usually in deep learning training the model is also called "fitting" that is bec
 ```clojure
 => (nn/fit model data-loader)
 
-Epoch[0] Batch [10]	  Speed: 205.92 samples/sec	Train-accuracy=0.715909
-Epoch[0] Batch [20]	  Speed: 224.40 samples/sec	Train-accuracy=0.752976
-Epoch[0] Batch [30]	  Speed: 217.39 samples/sec	Train-accuracy=0.770161
-Epoch[0] Batch [40]	  Speed: 216.80 samples/sec	Train-accuracy=0.775915
+Epoch[0] Batch [10]	Speed: 205.92 samples/sec	Train-accuracy=0.715909
+Epoch[0] Batch [20]	Speed: 224.40 samples/sec	Train-accuracy=0.752976
+Epoch[0] Batch [30]	Speed: 217.39 samples/sec	Train-accuracy=0.770161
+Epoch[0] Batch [40]	Speed: 216.80 samples/sec	Train-accuracy=0.775915
 ...      ...
 Epoch[0] Batch [300]	Speed: 221.30 samples/sec	Train-accuracy=0.836171
 Epoch[0] Batch [310]	Speed: 220.69 samples/sec	Train-accuracy=0.837621
@@ -164,8 +185,8 @@ Epoch[0] Time cost=25629
 Epoch[0] Validation-accuracy=0.58284885
 ```
 
-By default `nn/fit` would train for a single epoch.
-`58.2%` validation accuracy is not exactly high, let's train it with some more epochs and with better metrics:
+By default `nn/fit` would train for a single epoch, notice `Epoch[0]` above.
+`58.2%` validation accuracy is not exactly high, let's train it with some more epochs and with better metrics.
 
 #### Better metrics
 
@@ -184,12 +205,12 @@ Let's create a composed metric from both `accuracy` and `f1`:
 
 and train for 5 more epochs:
 
-```
+```clojure
 => (nn/fit model data-loader {:epochs 5
                               :params {:eval-metric metric}})
 
-Epoch[0] Batch [10]	  Speed: 211.92 samples/sec	Train-accuracy=0.875000
-Epoch[0] Batch [10]	  Speed: 211.92 samples/sec	Train-f1=0.920778
+Epoch[0] Batch [10]	Speed: 211.92 samples/sec	Train-accuracy=0.875000
+Epoch[0] Batch [10]	Speed: 211.92 samples/sec	Train-f1=0.920778
 Epoch[0] Batch [300]	Speed: 219.48 samples/sec	Train-accuracy=0.910714
 Epoch[0] Batch [300]	Speed: 219.48 samples/sec	Train-f1=0.944446
 ...
