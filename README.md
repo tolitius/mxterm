@@ -121,6 +121,8 @@ Creating model based on "ResNet 18". This will add our custom layer at the "head
 
 ![transfer learning: cut head](doc/img/resnet-to-groot-layer.png)
 
+notice how the model's "head" changed from classifying 1000 categories that ResNet was trained with to just 2 categories that Groot needs.
+
 ```clojure
 => (def model (nn/make-model {:arch "model/resnet-18"
                               :data-loader data-loader}))
@@ -242,6 +244,65 @@ a probability that it sees human on the image, the second one a probability it d
 ```
 
 niice.
+
+# Visualizing things
+
+There many things that can be visualized: data, metrics, models, confusion matricies, etc.
+
+Here are a couple of examples on how to visualize metrics and models.
+
+## Looking at the architecture
+
+Visualizing model is simple:
+
+```clojure
+=> (require '[mxterm.nn :as nn])
+=> (doc nn/draw)
+-------------------------
+mxterm.nn/draw
+([{:keys [model path data title], :or {data [1 3 224 224], path "./", title "groot"}}])
+  creates a PDF with a prety model architecture
+
+    => (nn/draw {:model m :title "resnet-18"})
+```
+
+`nn/draw` relies on `org.apache.clojure-mxnet.visualization` which relies on [org.apache.mxnet.Visualization](https://github.com/apache/incubator-mxnet/blob/master/scala-package/core/src/main/scala/org/apache/mxnet/Visualization.scala)
+
+Let's load the model and draw it:
+
+```clojure
+=> (def resnet-model (nn/load-model "model/resnet-18"))
+
+[00:46:14] src/nnvm/legacy_json_util.cc:209: Loading symbol saved by previous version v0.8.0. Attempting to upgrade...
+[00:46:14] src/nnvm/legacy_json_util.cc:217: Symbol successfully upgraded!
+#'boot.user/resnet-model
+
+=> (nn/draw {:model resnet-model :title "resnet-18"})
+#object[org.apache.mxnet.Visualization$Dot 0x5457945a "org.apache.mxnet.Visualization$Dot@5457945a"]
+```
+
+which will generate a colorful PDF with all the layers in this architecture. Here are some examples of what it does: [doc/resnet-18.pdf](doc/resnet-18.pdf), [doc/groot.pdf](doc/groot.pdf)
+
+## Looking at the metrics
+
+This is the part of deep learning where Clojure really shines I think, mostly due to ClojureScript. `mxterm` relies on [Oz](https://github.com/metasoarous/oz) to draw these:
+
+```clojure
+=> (require '[oz.core :as oz] '[mxterm.plot :as p])
+
+=> (oz/start-plot-server!)
+19-04-02 04:55:56 reducer-4.local INFO [oz.server:116] - Web server is running at `http://localhost:10666/`
+
+=> (p/plot-losses "dev-resources/groot/recorded-metrics.edn")
+```
+
+![mxnet metrics plotted](doc/img/metrics-oz.png)
+
+This is of course a bit bumpy and had to be collected via [custom mertics recorder](https://github.com/tolitius/mxterm/blob/a90c714cf31936a819eecb80a51478332896165e/src/mxterm/metrics.clj#L21-L31) but it's a start.
+
+## What is all this?
+
+`mxterm` is not a replacement for anything. It is mostly an intermediate step to play with and explore MXNet before Clojure implements Gluon API. Clojure Module API are of course more mature and a lot better supported, so if/once Module API make sense you should definitely use it. Meanwhile `mxterm` is here to explore.
 
 ## License
 
