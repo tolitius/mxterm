@@ -3,3 +3,4 @@
 **/data/
 **/model/
 .nrepl*
+.DS_Store
