@@ -54,8 +54,8 @@ examples of such architectures:
 
 * you take that "pretrained" model
 * you replace its "head"
-  - by adding your layer as the last layer of that pretrained model
-    (i.e. model was trained to understand English, but you need to train it to write poems: so you are going to train this last layer with poems)
+  - by adding your layer, or two, or three, as the last layer(s) of that pretrained model
+    (i.e. model was trained to understand English, but you need to train it to write poems: so you are going to train these last layers with poems)
 * you train this model with your new data (poems, your classified images, etc.)
 
 Hence the new model would be well tuned to your data by relying on all that wisdom from the pretrained model + some your additional training.
@@ -110,7 +110,7 @@ model
 
 ## Learning things
 
-MXNet comes in two flavors: [Gluon API](https://mxnet.incubator.apache.org/api/python/gluon/gluon.html) and [Module API](https://mxnet.incubator.apache.org/api/python/module/module.html). Clojure bindings are currently based on Module API that are basd on Scala mxnet bindings that are based on [JNI bindings](https://github.com/apache/incubator-mxnet/tree/master/scala-package/native). Clojure Gluon API are currently [proposed](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=103089990).
+MXNet comes in two flavors: [Gluon API](https://mxnet.incubator.apache.org/api/python/gluon/gluon.html) and [Module API](https://mxnet.incubator.apache.org/api/python/module/module.html). Clojure bindings are currently based on Module API that are based on Scala mxnet bindings that are based on [JNI bindings](https://github.com/apache/incubator-mxnet/tree/master/scala-package/native). Clojure Gluon API are currently [proposed](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=103089990).
 
 Module API are not complex, but quite different from a "traditional" deep learning flow (i.e. PyTorch, Tensorflow, Keras, etc.) hence take time to wrap one's mind around.
 

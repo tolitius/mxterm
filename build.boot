@@ -5,6 +5,8 @@
   :dependencies '[[org.clojure/clojure      "1.9.0"]
 
                   [org.apache.mxnet/mxnet-full_2.11-osx-x86_64-cpu "1.5.0-SNAPSHOT"]
+                  ;; [org.apache.mxnet/mxnet-full_2.11-linux-x86_64-gpu "1.5.0-SNAPSHOT"]   ;; when run on a linux box with GPU
+
                   [org.apache.mxnet.contrib.clojure/clojure-mxnet "1.5.0-SNAPSHOT"]
                   [origami                  "4.0.0-3"]
                   [metasoarous/oz           "1.6.0-alpha2"]
